@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const userController_1 = require("../controllers/userController");
+const tokenHandler_1 = require("../utils/tokenHandler");
+const roleChecker_1 = __importDefault(require("../utils/roleChecker"));
+const userRoutes = express_1.default.Router();
+userRoutes.route('/register').post(userController_1.registerUser);
+userRoutes.route('/login').post(userController_1.loginUser);
+userRoutes.route('/verify').post(tokenHandler_1.veriFyUserToken, userController_1.verifyUser);
+userRoutes.route('/verify-email').post(userController_1.verifyEmail);
+userRoutes.route('/verify-otp').post(tokenHandler_1.veriFyUserToken, userController_1.verifyOtp);
+userRoutes.route('/forgot-password').put(tokenHandler_1.veriFyUserToken, userController_1.resetPassword);
+userRoutes.route('/user-details').get(tokenHandler_1.veriFyUserToken, userController_1.getPersonalDetails);
+userRoutes.route('/update-userdetails').put(tokenHandler_1.veriFyUserToken, userController_1.updatePersonalDetails);
+userRoutes.route('/users').get(tokenHandler_1.veriFyUserToken, (0, roleChecker_1.default)("admin"), userController_1.getUsers).post(tokenHandler_1.veriFyUserToken, (0, roleChecker_1.default)("admin"), userController_1.addUser);
+userRoutes.route('/users/:id').get(tokenHandler_1.veriFyUserToken, (0, roleChecker_1.default)("admin"), userController_1.getUser).put(tokenHandler_1.veriFyUserToken, (0, roleChecker_1.default)("admin"), userController_1.updateUser).delete(tokenHandler_1.veriFyUserToken, (0, roleChecker_1.default)("admin"), userController_1.deleteUser);
+exports.default = userRoutes;
